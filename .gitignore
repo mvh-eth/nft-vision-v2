@@ -3,7 +3,6 @@
 /__pycache__
 /celery
 /notebooks
-/read some data.ipynb
 /venv
 reservoir/__pycache__/***
 reservoir/__pycache__/*.pyc
