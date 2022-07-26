@@ -30,8 +30,16 @@ def refresh_top_collections():
     top_collections = db.read_mongo("top_collections")
     
     for collection in top_collections:
+        #start stop watch
+        start = time.time()
+        
         update_sales(collection)
         update_listings(collection)
+        
+        #stop stop watch
+        end = time.time()
+        
+        print(f"updated {collection['slug']} in {end - start} seconds")
     
     print(f"updated all data")
 

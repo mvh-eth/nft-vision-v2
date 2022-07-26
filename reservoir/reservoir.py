@@ -9,8 +9,8 @@ class Reservoir:
         self.base_url = "https://api.reservoir.tools"
         self.headers = {"Accept": "*/*", "x-api-key": "demo-api-key"}
 
-    def get_top_collections(self):
-        url = f"{self.base_url}/collections/v4?sortBy=30DayVolume&includeTopBid=false&limit=10"
+    def get_top_collections(self, top_n=20):
+        url = f"{self.base_url}/collections/v4?sortBy=30DayVolume&includeTopBid=false&limit={top_n}"
         top_collections = requests.get(url, headers=self.headers).json()
         return top_collections["collections"]
     

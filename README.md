@@ -12,3 +12,9 @@ https://mvh.gitbook.io/nft-vision/
 python3 -m venv venv
 
 source venv/bin/activate
+
+pip install -r requirements.txt
+
+# current setup
+
+env is set to use local mongo db

@@ -24,7 +24,7 @@ def update_sales(collection):
     #check collection exists in database
     if not db.collection_exists(table_name):
         #get 1000 days ago as epoch
-        start_date = today - (60 * 60 * 24 * os.get_env("MAX_SALES_DAYS"))
+        start_date = today - (60 * 60 * 24 * int(os.getenv("MAX_SALES_DAYS")))
         last_sale = start_date
     else:
         #get the last sale from the database
@@ -52,15 +52,17 @@ def update_listings(collection):
     
     table_name = f"{collection['slug']}_listings"
     
-    #get the last listing from the database
-    last_listing = db.read_mongo(table_name, query_sort=[("createdAt", -1)], query_limit=1)[0]['createdAt']
-    
-    last_listing = to_datetime(last_listing)
-    
-    #make sure last listing is over 10 mins ago
-    if (time.time() - last_listing.timestamp()) > (60 * 10):
-        print(f"listings up to date for {collection['slug']}")
-        return None
+    if db.collection_exists(table_name):
+
+        #get the last listing from the database
+        last_listing = db.read_mongo(table_name, query_sort=[("createdAt", -1)], query_limit=1)[0]['createdAt']
+        
+        last_listing = to_datetime(last_listing)
+        
+        #make sure last listing is over 10 mins ago
+        if (time.time() - last_listing.timestamp()) > (60 * 10):
+            print(f"listings up to date for {collection['slug']}")
+            return None
 
     resp = reservoir.get_active_listings(collection=collection_contract, continuation=None)
     
