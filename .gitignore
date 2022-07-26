@@ -6,3 +6,4 @@
 /venv
 reservoir/__pycache__/***
 reservoir/__pycache__/*.pyc
+.env
