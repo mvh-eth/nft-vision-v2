@@ -1,7 +1,11 @@
+from distutils.log import debug
+import imp
 import time 
 
 from fastapi import FastAPI
 from fastapi_utils.tasks import repeat_every
+
+import uvicorn
 
 from database import Database
 from reservoir.reservoir import Reservoir
@@ -33,6 +37,9 @@ def refresh_top_collections():
         #start stop watch
         start = time.time()
         
+        if not db.collection_exists(f"{collection['slug']}_metadata"):
+            update_metadata(collection)
+            
         update_sales(collection)
         update_listings(collection)
         
@@ -66,3 +73,7 @@ async def get_collection_sales(slug: str):
 @app.get("/collection/{slug}/listings")
 async def get_collection_listings(slug: str):
     return db.read_mongo(f"{slug}_listings", query_sort=[("createdAt", -1)], query_limit=100)
+
+''' #run main
+if __name__ == "__main__":
+    uvicorn.run(app, debug=True) '''

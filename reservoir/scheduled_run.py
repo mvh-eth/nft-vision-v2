@@ -46,6 +46,8 @@ def update_sales(collection):
     
     print(f"updated {collection['slug']} sales data")
     
+    return None
+    
 def update_listings(collection):
     
     collection_contract = collection['primaryContract']
@@ -77,3 +79,23 @@ def update_listings(collection):
         db.write_mongo(table_name, resp['orders'])
     
     print(f"updated {collection['slug']} listings data")
+    
+    return None
+
+def update_metadata(collection):
+    table_name = f"{collection['slug']}_metadata"
+
+    resp = reservoir.get_metadata(collection=collection['primaryContract'])
+    tokens = [i['token'] for i in resp['tokens']]
+    db.write_mongo(table_name, tokens)
+    
+    #if continuation token is present, keep calling the API until no continuation token is present
+    while resp['continuation']:
+        resp = reservoir.get_metadata(collection=collection['primaryContract'], continuation=resp['continuation'])
+        tokens = [i['token'] for i in resp['tokens']]
+
+        db.write_mongo(table_name, tokens)
+
+    print(f"updated {collection['slug']} metadata")
+    
+    return None

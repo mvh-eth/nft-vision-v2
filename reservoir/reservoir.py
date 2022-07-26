@@ -27,5 +27,10 @@ class Reservoir:
             url += f"&continuation={continuation}"
         return requests.get(url, headers=self.headers).json()
 
+    def get_metadata(self, collection, continuation=None):
+        url = f"https://api.reservoir.tools/tokens/details/v4?contract={collection}&sortBy=floorAskPrice&limit=50"
+        if continuation:
+            url += f"&continuation={continuation}"
+        return requests.get(url, headers=self.headers).json()
 
 
