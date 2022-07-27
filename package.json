@@ -1,0 +1,8 @@
+{
+    "name": "nft-vision-api",
+    "version": "1.0.0",
+    "author": "spink.eth",
+    "devDependencies": {
+        "serverless-python-requirements": "^5.4.0"
+    }
+}

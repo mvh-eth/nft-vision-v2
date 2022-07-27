@@ -1,11 +1,11 @@
 import os
 import time
 
-from database import Database
+from src.database import Database
 from dotenv import load_dotenv
 from pandas import to_datetime
 
-from reservoir.reservoir import Reservoir
+from src.reservoir import Reservoir
 
 load_dotenv()  # take environment variables from .env.
 
