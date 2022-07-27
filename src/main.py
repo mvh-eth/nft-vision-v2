@@ -5,7 +5,8 @@ from fastapi import FastAPI
 from fastapi_utils.tasks import repeat_every
 from mangum import Mangum
 
-from src.database import Database
+#from src.database import Database
+from src.database_bigquery import BigQuery
 from src.reservoir import Reservoir
 from src.scheduled_run import *
 
@@ -14,31 +15,27 @@ openapi_prefix = f"/{stage}" if stage else "/"
 
 app = FastAPI(title="NFTVision", openapi_prefix=openapi_prefix) # Here is the magic
 
-db = Database()
+#db = Database()
+bq = BigQuery()
 
 reservoir = Reservoir()
 
-#@app.on_event("startup")
-#@repeat_every(seconds=60 * 15)  # repeat 15 mins
-#refresh top collections every 15 mins
-def refresh_top_collections():
-    top_collections = reservoir.get_top_collections()
+@app.on_event("startup")
+#repeat_every(seconds=60 * 15)  # repeat 15 mins
+def refresh():
     
-    top_collections = [collection for collection in top_collections if collection['slug'] != "ens"]
-    
-    db.write_mongo("top_collections", top_collections, overwrite=True)
-
-    print(f"updated top collections")
+    update_top_collections()
     
     #read all top collections
-    top_collections = db.read_mongo("top_collections")
+    top_collections = bq.read_mongo("top_collections", return_type="dict")
     
     for collection in top_collections:
         #start stop watch
         start = time.time()
         
-        if not db.collection_exists(f"{collection['slug']}_metadata"):
-            update_metadata(collection)
+        if not bq.collection_exists(f"{collection['slug']}_metadata"):
+            print(f"{collection['slug']}_metadata does not exist")
+            #update_metadata(collection)
             
         update_sales(collection)
         update_listings(collection)
