@@ -13,3 +13,5 @@ package-lock.json
 src/__pycache__/***
 .DS_Store
 creds
+nft-vision.json
+database_interactions.py
