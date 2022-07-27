@@ -43,9 +43,14 @@ class BigQuery:
                 self.client.delete_table(table_name)
         
         # Load data to BQ
-        job = self.client.load_table_from_dataframe(dataframe, table_name)
-        job.result()
-        print(f"Loaded {job.output_rows} rows into {self.credentials.project_id}:{table_name}.")
+        try:
+            job = self.client.load_table_from_dataframe(dataframe, table_name)
+            job.result()
+            print(f"Loaded {job.output_rows} rows into {self.credentials.project_id}:{table_name}.")
+        except Exception as e:
+            print(f"Error loading data into {self.credentials.project_id}:{table_name}.")
+            print(e)
+            return False
         
     def read_mongo(self, table_name, return_type="dataframe", query_sort=None, query_limit=None):
         """
@@ -66,7 +71,7 @@ class BigQuery:
         if return_type == "dataframe":
             return self.client.list_rows(table).to_dataframe()
         elif return_type == "dict":
-            return self.client.list_rows(table).to_dataframe().to_dict(orient="records")
+            return self.client.list_rows(table).to_dataframe().to_dict(orient="records", )
         else:
             raise ValueError("return_type must be either 'dataframe' or 'dict'")
     

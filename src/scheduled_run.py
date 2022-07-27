@@ -39,10 +39,11 @@ def update_sales(collection):
         start_date = today - (60 * 60 * 24 * int(os.getenv("MAX_SALES_DAYS")))
         last_sale = start_date
     else:
-        #get the last sale from the database
+        return None
+        ''' #get the last sale from the database
         last_sale = bq.read_mongo(table_name, query_sort="timestamp", query_limit=1)[0]['timestamp']
         
-        last_sale = int(last_sale) + 1
+        last_sale = int(last_sale) + 1 '''
 
     resp = reservoir.get_historical_sales(collection=collection_contract, start_date=last_sale, end_date=today)
     
@@ -66,7 +67,7 @@ def update_listings(collection):
     
     table_name = f"{collection['slug']}_listings"
     
-    if bq.collection_exists(table_name):
+    ''' if bq.collection_exists(table_name):
 
         #get the last listing from the database
         last_listing = bq.read_mongo(table_name, query_sort=[("createdAt", -1)], query_limit=1)[0]['createdAt']
@@ -76,7 +77,7 @@ def update_listings(collection):
         #make sure last listing is over 10 mins ago
         if (time.time() - last_listing.timestamp()) > (60 * 10):
             print(f"listings up to date for {collection['slug']}")
-            return None
+            return None '''
 
     resp = reservoir.get_active_listings(collection=collection_contract, continuation=None)
     
@@ -88,7 +89,11 @@ def update_listings(collection):
     #if continuation token is present, keep calling the API until no continuation token is present
     while resp['continuation']:
         resp = reservoir.get_active_listings(collection=collection_contract, continuation=resp['continuation'])
-        bq.write_mongo(table_name, resp['orders'])
+        worked = bq.write_mongo(table_name, resp['orders'])
+        
+        if not worked:
+            print(f"failed to write {collection['slug']} listings")
+            return None
     
     print(f"updated {collection['slug']} listings data")
     
