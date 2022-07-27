@@ -13,3 +13,4 @@ package-lock.json
 src/__pycache__/***
 .DS_Store
 creds
+key.json

@@ -1,16 +1,22 @@
-import redshift_connector as rsc
+from google.cloud import bigquery
+from google.oauth2 import service_account
 import pandas as pd
 
 
-# JDBC jdbc:redshift://default.020428635727.eu-west-2.redshift-serverless.amazonaws.com:5439/dev
-# ODBC Driver={Amazon Redshift (x64)}; Server=default.020428635727.eu-west-2.redshift-serverless.amazonaws.com; Database=dev
+key_path = "/Users/jeremysavage/Documents/MVH/nft-vision-v2/key.json"
 
+credentials = service_account.Credentials.from_service_account_file(
+ key_path, scopes=["https://www.googleapis.com/auth/cloud-platform"],
+)
 
-conn = rsc.connect(
-     host='default.020428635727.eu-west-2.redshift-serverless.amazonaws.com',
-     database='dev',
-     user='admin',
-     password='xNSwXT35i4fejwm'
-  )
+client = bigquery.Client(credentials=credentials, project=credentials.project_id,)
 
-print(conn)
+# Example data
+df = pd.DataFrame({'a': [1,2,4], 'b': ['123', '456', '000']})
+
+# Define table name, in format dataset.table_name
+table = 'nft_vision.test_table'
+
+# Load data to BQ
+job = client.load_table_from_dataframe(df, table)
+
