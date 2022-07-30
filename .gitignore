@@ -15,3 +15,5 @@ src/__pycache__/***
 creds
 nft-vision.json
 database_interactions.py
+key.json
+/.history
