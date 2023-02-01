@@ -9,8 +9,7 @@ import pandas as pd
 conn = rsc.connect(
      host='default.020428635727.eu-west-2.redshift-serverless.amazonaws.com',
      database='dev',
-     user='admin',
-     password='xNSwXT35i4fejwm'
+  
   )
 
 print(conn)
